@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Inglés A1">
+<title>Aprende Inglés A1</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Nunito', sans-serif; background: #F7F9FC; min-height: 100vh; max-width: 430px; margin: 0 auto; }
+  button { font-family: 'Nunito', sans-serif; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  #home { padding: 0 0 80px; }
+  .header { background: white; padding: 20px 20px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .header-top { display: flex; justify-content: space-between; align-items: center; }
+  .greeting { font-size: 13px; color: #888; font-weight: 600; }
+  .title-main { font-size: 22px; font-weight: 900; color: #1A1A2E; }
+  .streak-badge { background: #FFF3E0; border-radius: 16px; padding: 8px 14px; display: flex; align-items: center; gap: 6px; }
+  .streak-num { font-weight: 800; color: #FF6D00; font-size: 18px; }
+  .progress-section { margin-top: 16px; }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .progress-label span { font-size: 12px; color: #888; font-weight: 600; }
+  .progress-label span:last-child { color: #2196F3; font-weight: 700; }
+  .progress-bar-bg { background: #E8F0FE; border-radius: 20px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { background: linear-gradient(90deg, #2196F3, #42A5F5); height: 100%; border-radius: 20px; transition: width 0.5s; }
+  .section-label { font-size: 13px; color: #888; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; }
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quick-btn { border: none; border-radius: 20px; padding: 18px 14px; color: white; cursor: pointer; text-align: left; width: 100%; }
+  .quick-btn .icon { font-size: 28px; }
+  .quick-btn .label { font-weight: 800; font-size: 15px; margin-top: 8px; }
+  .quick-btn .sub { font-size: 12px; opacity: 0.85; }
+  .lesson-card { background: white; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; border: 2px solid #E8EAED; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 10px; width: 100%; text-align: left; }
+  .lesson-icon-wrap { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .lesson-info { flex: 1; }
+  .lesson-name { font-weight: 800; font-size: 15px; color: #1A1A2E; }
+  .lesson-sub { font-size: 12px; color: #888; margin-top: 2px; }
+  .done-badge { border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 700; color: white; }
+  .tip-box { margin: 20px 16px 0; background: #E8F5E9; border-radius: 18px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; }
+  .tip-text .tip-title { font-weight: 800; color: #2E7D32; font-size: 14px; }
+  .tip-text .tip-body { font-size: 13px; color: #388E3C; margin-top: 2px; }
+
+  /* LESSON SCREEN */
+  #lesson { padding: 20px; min-height: 100vh; }
+  .back-btn { background: white; border: none; border-radius: 12px; width: 40px; height: 40px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .lesson-top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .lesson-top-info .lesson-top-name { font-weight: 800; font-size: 16px; color: #1A1A2E; }
+  .lesson-top-info .lesson-top-count { font-size: 12px; color: #888; }
+  .dots-row { display: flex; gap: 6px; margin-bottom: 24px; }
+  .dot { flex: 1; height: 6px; border-radius: 10px; background: #DEDEDE; transition: background 0.3s; }
+  .phrase-card { background: white; border-radius: 28px; padding: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); margin-bottom: 16px; text-align: center; }
+  .phrase-lang { font-size: 13px; color: #888; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; }
+  .phrase-text { font-size: 36px; font-weight: 900; color: #1A1A2E; line-height: 1.2; margin-bottom: 8px; }
+  .phrase-phonetic { font-size: 18px; font-weight: 700; border-radius: 12px; padding: 6px 16px; display: inline-block; margin-bottom: 20px; }
+  .listen-btns { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; }
+  .listen-slow { color: white; border: none; border-radius: 16px; padding: 12px 24px; font-size: 15px; font-weight: 700; cursor: pointer; flex: 1; }
+  .listen-fast { background: #F5F5F5; color: #555; border: none; border-radius: 16px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
+  .transl-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .transl-reveal-btn { background: none; border: 2px dashed; border-radius: 14px; padding: 12px; width: 100%; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .transl-content { text-align: center; }
+  .transl-lang { font-size: 13px; color: #888; font-weight: 600; margin-bottom: 6px; }
+  .transl-text { font-size: 22px; font-weight: 800; color: #1A1A2E; }
+  .speak-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .speak-title { font-weight: 700; font-size: 14px; color: #1A1A2E; margin-bottom: 12px; }
+  .mic-btn { border: 2px solid; border-radius: 16px; padding: 14px; width: 100%; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .feedback-box { margin-top: 10px; padding: 10px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; }
+  .next-btn { color: white; border: none; border-radius: 20px; padding: 16px; width: 100%; font-size: 17px; font-weight: 800; cursor: pointer; }
+
+  /* QUIZ */
+  #quiz { padding: 20px; min-height: 100vh; background: #F7F9FC; }
+  .quiz-top { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .quiz-top-info .quiz-title { font-weight: 800; font-size: 16px; }
+  .quiz-top-info .quiz-count { font-size: 12px; color: #888; }
+  .score-badge { background: #E8F5E9; border-radius: 12px; padding: 6px 12px; font-weight: 700; color: #4CAF50; }
+  .quiz-progress { display: flex; gap: 4px; margin-bottom: 24px; }
+  .q-dot { flex: 1; height: 6px; border-radius: 10px; background: #E0E0E0; }
+  .question-card { background: white; border-radius: 24px; padding: 28px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); text-align: center; }
+  .question-text { font-size: 22px; font-weight: 800; color: #1A1A2E; line-height: 1.3; }
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn { background: white; border: 2px solid #E8EAED; border-radius: 16px; padding: 16px 20px; font-size: 16px; font-weight: 700; color: #1A1A2E; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; width: 100%; font-family: 'Nunito', sans-serif; transition: all 0.2s; }
+  .option-letter { width: 30px; height: 30px; border-radius: 10px; background: #F5F5F5; color: #888; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .option-result { margin-left: auto; }
+
+  /* RESULT */
+  #result { padding: 30px; min-height: 100vh; background: #F7F9FC; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .result-emoji { font-size: 80px; }
+  .result-title { font-size: 28px; font-weight: 900; color: #1A1A2E; margin-top: 16px; }
+  .result-sub { font-size: 18px; color: #888; margin-top: 8px; }
+  .score-card { background: white; border-radius: 24px; padding: 20px 30px; margin-top: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .score-pct { font-size: 48px; font-weight: 900; color: #2196F3; }
+  .score-pct-label { font-size: 14px; color: #888; }
+  .result-btns { display: flex; gap: 12px; margin-top: 30px; width: 100%; }
+  .btn-retry { flex: 1; background: #2196F3; color: white; border: none; border-radius: 16px; padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
+  .btn-home { flex: 1; background: white; color: #2196F3; border: 2px solid #2196F3; border-radius: 16px; padding: 16px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
+
+  .padx { padding-left: 16px; padding-right: 16px; }
+  .padt { padding-top: 20px; }
+</style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div id="home" class="screen active">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="greeting" id="greeting">BUENAS TARDES 🌤️</div>
+        <div class="title-main">¡A practicar inglés!</div>
+      </div>
+      <div class="streak-badge">
+        <span style="font-size:20px">🔥</span>
+        <span class="streak-num" id="streakNum">3</span>
+      </div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>TU PROGRESO HOY</span>
+        <span id="progressLabel">0/5 lecciones</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="padx padt">
+    <div class="section-label">ACCESO RÁPIDO</div>
+    <div class="quick-grid">
+      <button class="quick-btn" style="background:linear-gradient(135deg,#2196F3,#1565C0)" onclick="openLesson(0)">
+        <div class="icon">🎧</div>
+        <div class="label">Escuchar</div>
+        <div class="sub">Practica pronunciación</div>
+      </button>
+      <button class="quick-btn" style="background:linear-gradient(135deg,#9C27B0,#6A1B9A)" onclick="startQuiz()">
+        <div class="icon">🧠</div>
+        <div class="label">Quiz rápido</div>
+        <div class="sub">Pon a prueba lo aprendido</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="padx padt">
+    <div class="section-label">LECCIONES</div>
+    <div id="lessonsList"></div>
+  </div>
+
+  <div class="tip-box">
+    <div style="font-size:28px">💡</div>
+    <div class="tip-text">
+      <div class="tip-title">Consejo del día</div>
+      <div class="tip-body">Escucha primero, luego repite en voz alta. ¡La pronunciación mejora con práctica diaria desde las 6pm!</div>
+    </div>
+  </div>
+</div>
+
+<!-- LESSON SCREEN -->
+<div id="lesson" class="screen">
+  <div class="lesson-top">
+    <button class="back-btn" onclick="goHome()">‹</button>
+    <div class="lesson-top-info">
+      <div class="lesson-top-name" id="lessonTopName"></div>
+      <div class="lesson-top-count" id="lessonTopCount"></div>
+    </div>
+  </div>
+  <div class="dots-row" id="dotsRow"></div>
+  <div class="phrase-card">
+    <div class="phrase-lang">🇺🇸 EN INGLÉS</div>
+    <div class="phrase-text" id="phraseText"></div>
+    <div class="phrase-phonetic" id="phrasePhonetic"></div>
+    <div class="listen-btns">
+      <button class="listen-slow" id="listenSlowBtn" onclick="speakSlow()">🔊 Escuchar despacio</button>
+    </div>
+    <button class="listen-fast" onclick="speakFast()">⚡ Velocidad normal</button>
+  </div>
+  <div class="transl-card" id="translCard">
+    <button class="transl-reveal-btn" id="translBtn" onclick="showTranslation()">👁️ Ver traducción en español</button>
+    <div class="transl-content" id="translContent" style="display:none">
+      <div class="transl-lang">🇪🇸 EN ESPAÑOL</div>
+      <div class="transl-text" id="translText"></div>
+    </div>
+  </div>
+  <div class="speak-card">
+    <div class="speak-title">🎤 ¡Ahora dilo tú!</div>
+    <button class="mic-btn" id="micBtn" onclick="startListening()">🎙️ Tocar para hablar</button>
+    <div class="feedback-box" id="feedbackBox" style="display:none"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextPhrase()">Siguiente frase →</button>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz" class="screen">
+  <div class="quiz-top">
+    <button class="back-btn" onclick="goHome()">‹</button>
+    <div class="quiz-top-info">
+      <div class="quiz-title">🧠 Quiz rápido</div>
+      <div class="quiz-count" id="quizCount">Pregunta 1 de 8</div>
+    </div>
+    <div class="score-badge" id="quizScoreBadge">0 pts</div>
+  </div>
+  <div class="quiz-progress" id="quizProgress"></div>
+  <div class="question-card">
+    <div class="question-text" id="questionText"></div>
+  </div>
+  <div class="options-list" id="optionsList"></div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result" class="screen">
+  <div class="result-emoji" id="resultEmoji"></div>
+  <div class="result-title" id="resultTitle"></div>
+  <div class="result-sub" id="resultSub"></div>
+  <div class="score-card">
+    <div class="score-pct" id="resultPct"></div>
+    <div class="score-pct-label">de respuestas correctas</div>
+  </div>
+  <div class="result-btns">
+    <button class="btn-retry" onclick="startQuiz()">🔄 Repetir</button>
+    <button class="btn-home" onclick="goHome()">🏠 Inicio</button>
+  </div>
+</div>
+
+<script>
+const lessons = [
+  { title: "Saludos básicos", emoji: "👋", color: "#E8F4FD", accent: "#2196F3",
+    phrases: [
+      { en: "Hello!", es: "¡Hola!", phonetic: "jé-lou" },
+      { en: "Good morning!", es: "¡Buenos días!", phonetic: "gud mór-ning" },
+      { en: "Good afternoon!", es: "¡Buenas tardes!", phonetic: "gud áf-ter-nún" },
+      { en: "Good night!", es: "¡Buenas noches!", phonetic: "gud náit" },
+      { en: "How are you?", es: "¿Cómo estás?", phonetic: "jau ar iú" },
+      { en: "I'm fine, thanks!", es: "¡Estoy bien, gracias!", phonetic: "aim fáin, zanks" },
+    ]
+  },
+  { title: "Presentarte", emoji: "🙋", color: "#F3E8FD", accent: "#9C27B0",
+    phrases: [
+      { en: "My name is...", es: "Mi nombre es...", phonetic: "mai néim is" },
+      { en: "I am from...", es: "Soy de...", phonetic: "ai am from" },
+      { en: "Nice to meet you!", es: "¡Mucho gusto!", phonetic: "náis tu mít iú" },
+      { en: "I speak Spanish.", es: "Hablo español.", phonetic: "ai spík spánish" },
+      { en: "I am learning English.", es: "Estoy aprendiendo inglés.", phonetic: "ai am lér-ning íng-glish" },
+    ]
+  },
+  { title: "Números 1-10", emoji: "🔢", color: "#E8FDF0", accent: "#4CAF50",
+    phrases: [
+      { en: "One", es: "Uno", phonetic: "wán" }, { en: "Two", es: "Dos", phonetic: "tú" },
+      { en: "Three", es: "Tres", phonetic: "zrí" }, { en: "Four", es: "Cuatro", phonetic: "fór" },
+      { en: "Five", es: "Cinco", phonetic: "fáiv" }, { en: "Six", es: "Seis", phonetic: "síks" },
+      { en: "Seven", es: "Siete", phonetic: "sé-ven" }, { en: "Eight", es: "Ocho", phonetic: "éit" },
+      { en: "Nine", es: "Nueve", phonetic: "náin" }, { en: "Ten", es: "Diez", phonetic: "tén" },
+    ]
+  },
+  { title: "Colores", emoji: "🎨", color: "#FDF3E8", accent: "#FF9800",
+    phrases: [
+      { en: "Red", es: "Rojo", phonetic: "réd" }, { en: "Blue", es: "Azul", phonetic: "blú" },
+      { en: "Green", es: "Verde", phonetic: "grín" }, { en: "Yellow", es: "Amarillo", phonetic: "yé-lou" },
+      { en: "Black", es: "Negro", phonetic: "blák" }, { en: "White", es: "Blanco", phonetic: "wáit" },
+      { en: "Pink", es: "Rosa", phonetic: "pink" }, { en: "Orange", es: "Naranja", phonetic: "ó-rench" },
+    ]
+  },
+  { title: "En el trabajo", emoji: "💼", color: "#FDE8E8", accent: "#F44336",
+    phrases: [
+      { en: "Good morning, team!", es: "¡Buenos días, equipo!", phonetic: "gud mór-ning, tím" },
+      { en: "I have a meeting.", es: "Tengo una reunión.", phonetic: "ai jav a mí-ting" },
+      { en: "Can you help me?", es: "¿Puedes ayudarme?", phonetic: "kan iú jelp mí" },
+      { en: "I don't understand.", es: "No entiendo.", phonetic: "ai dónt ander-stánd" },
+      { en: "Please repeat that.", es: "Por favor repite eso.", phonetic: "plís ri-pít dat" },
+      { en: "Thank you very much!", es: "¡Muchas gracias!", phonetic: "zank iú véri mách" },
+    ]
+  }
+];
+
+const quizBank = [
+  { q: "¿Cómo se dice 'Hola' en inglés?", options: ["Hello", "Goodbye", "Please", "Sorry"], ans: 0 },
+  { q: "¿Qué significa 'Good morning'?", options: ["Buenas noches", "Buenas tardes", "Buenos días", "Hasta luego"], ans: 2 },
+  { q: "¿Cómo se dice 'Gracias' en inglés?", options: ["Please", "Sorry", "Hello", "Thank you"], ans: 3 },
+  { q: "¿Qué significa 'I don't understand'?", options: ["No puedo", "No entiendo", "No me gusta", "No tengo"], ans: 1 },
+  { q: "¿Cómo se pronuncia 'Three'?", options: ["tri", "zrí", "trí", "srí"], ans: 1 },
+  { q: "¿Qué significa 'Nice to meet you'?", options: ["Adiós", "Mucho gusto", "Por favor", "Disculpe"], ans: 1 },
+  { q: "¿Cómo se dice 'Rojo' en inglés?", options: ["Blue", "Green", "Red", "Pink"], ans: 2 },
+  { q: "¿Cuánto es 'Five' en español?", options: ["Cuatro", "Seis", "Tres", "Cinco"], ans: 3 },
+];
+
+let completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[0]');
+let streak = parseInt(localStorage.getItem('streak') || '3');
+let currentLesson = 0, phraseIndex = 0, translShown = false;
+let quizIndex = 0, quizScore = 0, quizSelected = null;
+let isSpeaking = false, isListening = false;
+
+function save() {
+  localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+  localStorage.setItem('streak', streak);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function setGreeting() {
+  const h = new Date().getHours();
+  const g = document.getElementById('greeting');
+  if (h < 12) g.textContent = 'BUENOS DÍAS ☀️';
+  else if (h < 18) g.textContent = 'BUENAS TARDES 🌤️';
+  else g.textContent = 'BUENAS NOCHES 🌙';
+}
+
+function renderHome() {
+  setGreeting();
+  document.getElementById('streakNum').textContent = streak;
+  const pct = (completedLessons.length / lessons.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = completedLessons.length + '/' + lessons.length + ' lecciones';
+  const list = document.getElementById('lessonsList');
+  list.innerHTML = '';
+  lessons.forEach((l, i) => {
+    const done = completedLessons.includes(i);
+    const locked = i > completedLessons.length;
+    const btn = document.createElement('button');
+    btn.className = 'lesson-card';
+    btn.style.background = locked ? '#F0F0F0' : 'white';
+    btn.style.border = `2px solid ${done ? l.accent : locked ? '#E0E0E0' : '#E8EAED'}`;
+    btn.style.opacity = locked ? '0.6' : '1';
+    btn.style.cursor = locked ? 'not-allowed' : 'pointer';
+    if (done) btn.style.boxShadow = `0 4px 16px ${l.accent}33`;
+    btn.innerHTML = `
+      <div class="lesson-icon-wrap" style="background:${locked?'#F0F0F0':l.color}">${locked ? '🔒' : l.emoji}</div>
+      <div class="lesson-info">
+        <div class="lesson-name">${l.title}</div>
+        <div class="lesson-sub">${l.phrases.length} frases · Speaking + Listening</div>
+      </div>
+      ${done ? `<div class="done-badge" style="background:${l.accent}">✓ Listo</div>` : !locked ? `<div style="color:${l.accent};font-size:20px;font-weight:900">›</div>` : ''}
+    `;
+    if (!locked) btn.onclick = () => openLesson(i);
+    list.appendChild(btn);
+  });
+}
+
+function goHome() {
+  renderHome();
+  showScreen('home');
+}
+
+function openLesson(idx) {
+  currentLesson = idx;
+  phraseIndex = 0;
+  translShown = false;
+  renderLesson();
+  showScreen('lesson');
+}
+
+function renderLesson() {
+  const l = lessons[currentLesson];
+  const p = l.phrases[phraseIndex];
+  document.getElementById('lessonTopName').textContent = l.emoji + ' ' + l.title;
+  document.getElementById('lessonTopCount').textContent = 'Frase ' + (phraseIndex+1) + ' de ' + l.phrases.length;
+  document.getElementById('lesson').style.background = l.color;
+  document.getElementById('phraseText').textContent = p.en;
+  document.getElementById('phrasePhonetic').textContent = '/' + p.phonetic + '/';
+  document.getElementById('phrasePhonetic').style.background = l.color;
+  document.getElementById('phrasePhonetic').style.color = l.accent;
+  document.getElementById('listenSlowBtn').style.background = l.accent;
+  document.getElementById('translBtn').style.borderColor = l.accent;
+  document.getElementById('translBtn').style.color = l.accent;
+  document.getElementById('translText').textContent = p.es;
+  document.getElementById('translBtn').style.display = 'block';
+  document.getElementById('translContent').style.display = 'none';
+  translShown = false;
+  document.getElementById('micBtn').style.background = '#E8F5E9';
+  document.getElementById('micBtn').style.borderColor = '#4CAF50';
+  document.getElementById('micBtn').style.color = '#2E7D32';
+  document.getElementById('micBtn').textContent = '🎙️ Tocar para hablar';
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('nextBtn').style.background = l.accent;
+  document.getElementById('nextBtn').textContent = phraseIndex+1 < l.phrases.length ? 'Siguiente frase →' : '✅ ¡Lección completada!';
+  const dots = document.getElementById('dotsRow');
+  dots.innerHTML = '';
+  l.phrases.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.background = i <= phraseIndex ? l.accent : '#DEDEDE';
+    dots.appendChild(d);
+  });
+}
+
+function speakSlow() { speak(lessons[currentLesson].phrases[phraseIndex].en, 0.65); }
+function speakFast() { speak(lessons[currentLesson].phrases[phraseIndex].en, 1.0); }
+
+function speak(text, rate) {
+  if (!('speechSynthesis' in window)) { alert('Tu navegador no soporta audio'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = rate; u.pitch = 1;
+  u.onstart = () => { isSpeaking = true; document.getElementById('listenSlowBtn').textContent = '🔊 Escuchando...'; };
+  u.onend = () => { isSpeaking = false; document.getElementById('listenSlowBtn').textContent = '🔊 Escuchar despacio'; };
+  window.speechSynthesis.speak(u);
+}
+
+function showTranslation() {
+  document.getElementById('translBtn').style.display = 'none';
+  document.getElementById('translContent').style.display = 'block';
+  translShown = true;
+}
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showFeedback('❌ Activa el micrófono en Chrome para esta función', false); return; }
+  const rec = new SR();
+  rec.lang = 'en-US'; rec.interimResults = false;
+  rec.onstart = () => {
+    isListening = true;
+    const btn = document.getElementById('micBtn');
+    btn.textContent = '🔴 Escuchándote...';
+    btn.style.background = '#FFE0E0'; btn.style.borderColor = '#F44336'; btn.style.color = '#F44336';
+    showFeedback('🎤 Te estoy escuchando...', null);
+  };
+  rec.onresult = (e) => {
+    const said = e.results[0][0].transcript.toLowerCase().trim();
+    const target = lessons[currentLesson].phrases[phraseIndex].en.toLowerCase().replace(/[.,!?]/g, '').trim();
+    const ok = said.includes(target.split(' ')[0]) || target.includes(said.split(' ')[0]) || said.split(' ').some(w => target.includes(w));
+    showFeedback(ok ? '✅ ¡Muy bien! Lo dijiste correctamente 🎉' : `🔄 Dijiste: "${said}" — ¡Intenta de nuevo!`, ok);
+    resetMicBtn();
+  };
+  rec.onerror = () => { showFeedback('❌ No te escuché, ¡intenta de nuevo!', false); resetMicBtn(); };
+  rec.onend = () => { isListening = false; resetMicBtn(); };
+  rec.start();
+}
+
+function resetMicBtn() {
+  const btn = document.getElementById('micBtn');
+  btn.textContent = '🎙️ Tocar para hablar';
+  btn.style.background = '#E8F5E9'; btn.style.borderColor = '#4CAF50'; btn.style.color = '#2E7D32';
+}
+
+function showFeedback(msg, ok) {
+  const box = document.getElementById('feedbackBox');
+  box.style.display = 'block';
+  box.textContent = msg;
+  if (ok === true) { box.style.background = '#E8F5E9'; box.style.color = '#2E7D32'; }
+  else if (ok === false) { box.style.background = '#FFF3E0'; box.style.color = '#E65100'; }
+  else { box.style.background = '#E3F2FD'; box.style.color = '#1565C0'; }
+}
+
+function nextPhrase() {
+  const l = lessons[currentLesson];
+  if (phraseIndex + 1 < l.phrases.length) {
+    phraseIndex++;
+    renderLesson();
+  } else {
+    if (!completedLessons.includes(currentLesson)) { completedLessons.push(currentLesson); save(); }
+    goHome();
+  }
+}
+
+function startQuiz() {
+  quizIndex = 0; quizScore = 0; quizSelected = null;
+  renderQuiz();
+  showScreen('quiz');
+}
+
+function renderQuiz() {
+  const q = quizBank[quizIndex];
+  document.getElementById('quizCount').textContent = 'Pregunta ' + (quizIndex+1) + ' de ' + quizBank.length;
+  document.getElementById('quizScoreBadge').textContent = quizScore + ' pts';
+  document.getElementById('questionText').textContent = q.q;
+  const prog = document.getElementById('quizProgress');
+  prog.innerHTML = '';
+  quizBank.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'q-dot';
+    d.style.background = i < quizIndex ? '#4CAF50' : i === quizIndex ? '#2196F3' : '#E0E0E0';
+    prog.appendChild(d);
+  });
+  const opts = document.getElementById('optionsList');
+  opts.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${['A','B','C','D'][i]}</span>${opt}<span class="option-result"></span>`;
+    btn.onclick = () => handleAnswer(i);
+    opts.appendChild(btn);
+  });
+  quizSelected = null;
+}
+
+function handleAnswer(i) {
+  if (quizSelected !== null) return;
+  quizSelected = i;
+  const q = quizBank[quizIndex];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, idx) => {
+    const letter = btn.querySelector('.option-letter');
+    const result = btn.querySelector('.option-result');
+    if (idx === q.ans) {
+      btn.style.background = '#E8F5E9'; btn.style.borderColor = '#4CAF50'; btn.style.color = '#2E7D32';
+      letter.style.background = '#4CAF50'; letter.style.color = 'white';
+      result.textContent = '✅';
+    } else if (idx === i) {
+      btn.style.background = '#FFEBEE'; btn.style.borderColor = '#F44336'; btn.style.color = '#C62828';
+      letter.style.background = '#F44336'; letter.style.color = 'white';
+      result.textContent = '❌';
+    }
+  });
+  if (i === q.ans) quizScore++;
+  setTimeout(() => {
+    if (quizIndex + 1 < quizBank.length) { quizIndex++; renderQuiz(); }
+    else showResult();
+  }, 1300);
+}
+
+function showResult() {
+  const pct = Math.round((quizScore / quizBank.length) * 100);
+  document.getElementById('resultEmoji').textContent = quizScore >= 6 ? '🏆' : quizScore >= 4 ? '⭐' : '💪';
+  document.getElementById('resultTitle').textContent = quizScore >= 6 ? '¡Excelente!' : quizScore >= 4 ? '¡Muy bien!' : '¡Sigue practicando!';
+  document.getElementById('resultSub').textContent = 'Respondiste ' + quizScore + ' de ' + quizBank.length + ' correctamente';
+  document.getElementById('resultPct').textContent = pct + '%';
+  showScreen('result');
+}
+
+// Init
+renderHome();
+</script>
+</body>
+</html>
